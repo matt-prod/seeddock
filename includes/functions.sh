@@ -150,9 +150,9 @@ deploy_traefik_bootstrap() {
 
 deploy_sdm_container() {
   echo_info "Lancement de whoami (test à la place de SDM)..."
-  docker run -d --name sdm \
-    --restart unless-stopped \
-    --network traefik \
+  docker run -d --name "sdm" \
+    --restart "unless-stopped" \
+    --network "traefik" \
     -l "traefik.enable=true" \
     -l "traefik.http.routers.sdm.rule=PathPrefix(`/sdm`)" \
     -l "traefik.http.routers.sdm.entrypoints=websecure" \
