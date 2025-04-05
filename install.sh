@@ -19,7 +19,6 @@ echo_error() {
 }
 
 # ----------- Vérification de Git -----------
-
 if ! command -v git &>/dev/null; then
   echo_info "Installation de Git..."
   sudo apt update && sudo apt install -y git || {
@@ -30,18 +29,28 @@ else
   echo_info "Git déjà installé."
 fi
 
-# ----------- Lecture du chemin d'installation -----------
-
-DEFAULT_PATH="${HOME}/SeedDock"
-read -rp "📦 Chemin d'installation de SeedDock [default: ${DEFAULT_PATH}] : " custom_path
-INSTALL_DIR="${custom_path:-${DEFAULT_PATH}}"
-
-if [ -z "${INSTALL_DIR}" ]; then
-  echo_error "Le chemin d'installation est vide. Abandon."
-  exit 1
+# ----------- Vérification de Docker -----------
+if ! command -v docker &>/dev/null; then
+  echo_info "Installation de Docker via script officiel..."
+  curl -fsSL https://get.docker.com | sudo sh || {
+    echo_error "Échec de l'installation de Docker."
+    exit 1
+  }
+else
+  echo_info "Docker déjà installé."
 fi
 
-# ----------- Clonage du dépôt -----------
+# ----------- Groupes utilisateur -----------
+echo_info "Ajout de l'utilisateur aux groupes sudo et docker..."
+sudo usermod -aG sudo "${USER}"
+sudo usermod -aG docker "${USER}"
+echo "${USER} ALL=(ALL) NOPASSWD:ALL" | sudo tee "/etc/sudoers.d/${USER}" >/dev/null
+
+# ----------- Clonage dans ~/SeedDock -----------
+
+INSTALL_DIR="${HOME}/SeedDock"
+RESUME_FLAG="${INSTALL_DIR}/.resume_seeddock"
+BASHRC="${HOME}/.bashrc"
 
 if [ -d "${INSTALL_DIR}" ]; then
   echo_warn "Le dossier ${INSTALL_DIR} existe déjà."
@@ -53,11 +62,14 @@ else
   }
 fi
 
-# ----------- Préparation de l'exécution ------------
+# ----------- Préparation reprise automatique -----------
+if ! grep -q 'seeddock.sh' "${BASHRC}"; then
+  echo_info "Préparation de la reprise automatique après reconnexion..."
+  echo "[ -f \"${RESUME_FLAG}\" ] && bash \"${INSTALL_DIR}/seeddock.sh\" && rm -f \"${RESUME_FLAG}\"" >> "${BASHRC}"
+  touch "${RESUME_FLAG}"
+fi
 
-echo "${INSTALL_DIR}" > "${INSTALL_DIR}/.install_dir"
-
-chmod +x "${INSTALL_DIR}/seeddock.sh"
-
+# ----------- Lancement de seeddock.sh -----------
 echo_info "Lancement de l'installation avec seeddock.sh..."
+chmod +x "${INSTALL_DIR}/seeddock.sh"
 bash "${INSTALL_DIR}/seeddock.sh"

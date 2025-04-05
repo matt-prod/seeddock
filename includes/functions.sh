@@ -15,6 +15,7 @@ echo_error() {
 }
 
 # ------------- Étapes -------------
+
 run_step() {
   local label="$1"
   local func="$2"
@@ -78,20 +79,7 @@ setup_user_groups() {
   echo "${USER} ALL=(ALL) NOPASSWD:ALL" | sudo tee "/etc/sudoers.d/${USER}" >/dev/null
 }
 
-# ------------- Structure du projet -------------
-
-prompt_install_path() {
-  if [ -t 0 ]; then
-    read -rp "📦 Chemin d'installation de SeedDock [default: ${INSTALL_DIR}] : " custom_path
-    if [ -n "${custom_path}" ]; then
-      INSTALL_DIR="${custom_path}"
-      CONFIG_DIR="${INSTALL_DIR}/SDM/config"
-    fi
-  else
-    echo_info "Mode non interactif détecté, utilisation de : ${INSTALL_DIR}"
-  fi
-  export INSTALL_DIR CONFIG_DIR
-}
+# ------------- Structure -------------
 
 create_project_structure() {
   echo_info "Création des dossiers..."

@@ -4,7 +4,7 @@
 INCLUDES_DIR="$(dirname "${BASH_SOURCE[0]}")/includes"
 
 if [ ! -f "${INCLUDES_DIR}/functions.sh" ] || [ ! -f "${INCLUDES_DIR}/variables.sh" ]; then
-  echo -e "\033[1m[ERREUR]\033[0m Fichiers d'includes manquants."
+  echo -e "\033[1;31m[ERREUR]\033[0m Fichiers d'includes manquants."
   exit 1
 fi
 
