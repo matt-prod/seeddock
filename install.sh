@@ -33,9 +33,7 @@ fi
 # ----------- Lecture du chemin d'installation -----------
 
 DEFAULT_PATH="${HOME}/SeedDock"
-if [ -t 0 ]; then
-  read -rp "📦 Chemin d'installation de SeedDock [default: ${DEFAULT_PATH}] : " custom_path
-fi
+read -rp "📦 Chemin d'installation de SeedDock [default: ${DEFAULT_PATH}] : " custom_path
 INSTALL_DIR="${custom_path:-${DEFAULT_PATH}}"
 
 if [ -z "${INSTALL_DIR}" ]; then
