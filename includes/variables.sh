@@ -19,3 +19,5 @@ INSTALL_DIR="${HOME}/SeedDock"
 CONFIG_DIR="${INSTALL_DIR}/SDM/config"
 STATUS_FILE="${INSTALL_DIR}/.seeddock_step"
 RESUME_FLAG="${INSTALL_DIR}/.resume_seeddock"
+
+STEP=0
