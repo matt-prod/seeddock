@@ -1,6 +1,6 @@
 #!/bin/bash
 
-print_logo() {
+show_logo() {
   echo -e "
 ${CGRAY}   SSSSSSSSSSSSSSS ${CEND}${CBLUE}EEEEEEEEEEEEEEEEEEEEEE${CEND}${CGRAY}EEEEEEEEEEEEEEEEEEEEEEDDDDDDDDDDDDDD      DDDDDDDDDDDDD             OOOOOOOOO   ${CEND}${CGRAY}        CCCCCCCCCCCCC${CEND}${CBLUE}KKKKKKKKK    KKKKKKK${CEND}
 ${CGRAY} SS:::::::::::::::S${CEND}${CBLUE}E::::::::::::::::::::E${CEND}${CGRAY}::::::::::::::::::::ED::::::::::::DDD   D::::::::::::DDD        OO:::::::::OO   ${CEND}${CGRAY}     CCC::::::::::::C${CEND}${CBLUE}K:::::::K    K:::::K${CEND}
