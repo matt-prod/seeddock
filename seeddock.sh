@@ -30,12 +30,6 @@ case "$(cat "${STATUS_FILE}" 2>/dev/null || echo 0)" in
     install_docker
     setup_user_groups
 
-    if ! grep -q 'seeddock.sh' "${HOME}/.bashrc"; then
-      echo_info "Préparation de la reprise automatique après reconnexion..."
-      echo "[ -f \"${RESUME_FLAG}\" ] && bash \"${INSTALL_DIR}/seeddock.sh\" && rm -f \"${RESUME_FLAG}\"" >> "${HOME}/.bashrc"
-      touch "${RESUME_FLAG}"
-    fi
-
     echo_warn "Délogguez puis reconnectez-vous. La suite s'exécutera automatiquement."
     echo 1 > "${STATUS_FILE}"
     exit 0

@@ -62,7 +62,11 @@ else
   }
 fi
 
-# ----------- Préparation reprise automatique -----------
+# ----------- Ajout de la reprise automatique -----------
+
+RESUME_FLAG="${INSTALL_DIR}/.resume_seeddock"
+BASHRC="${HOME}/.bashrc"
+
 if ! grep -q 'seeddock.sh' "${BASHRC}"; then
   echo_info "Préparation de la reprise automatique après reconnexion..."
   echo "[ -f \"${RESUME_FLAG}\" ] && bash \"${INSTALL_DIR}/seeddock.sh\" && rm -f \"${RESUME_FLAG}\"" >> "${BASHRC}"
