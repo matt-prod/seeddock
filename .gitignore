@@ -1,0 +1,23 @@
+# .gitignore — SeedDock project
+
+# 🔐 Fichiers sensibles ou personnalisés
+SDM/config/
+.sd_status
+
+# 🐳 Données runtime des conteneurs
+containers/
+
+# 📦 Fichiers temporaires / systèmes
+*.log
+*.bak
+*.tmp
+
+# 💻 Éditeurs & OS
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# 🔧 Ansible
+*.retry
