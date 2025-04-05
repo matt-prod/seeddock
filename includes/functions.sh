@@ -1,7 +1,6 @@
 #!/bin/bash
 
 # ------------- Log Helpers -------------
-
 echo_info() {
   echo -e "${CBLUE}[INFO]${CEND} $1"
 }
@@ -71,10 +70,14 @@ setup_user_groups() {
 # ------------- Structure -------------
 
 prompt_install_path() {
-  read -rp "📦 Chemin d'installation de SeedDock [default: $INSTALL_DIR] : " custom_path
-  if [ -n "$custom_path" ]; then
-    INSTALL_DIR="$custom_path"
-    CONFIG_DIR="$INSTALL_DIR/SDM/config"
+  if [ -t 0 ]; then
+    read -rp "📦 Chemin d'installation de SeedDock [default: $INSTALL_DIR] : " custom_path
+    if [ -n "$custom_path" ]; then
+      INSTALL_DIR="$custom_path"
+      CONFIG_DIR="$INSTALL_DIR/SDM/config"
+    fi
+  else
+    echo_info "[INFO] Mode non interactif détecté, utilisation de : $INSTALL_DIR"
   fi
   export INSTALL_DIR CONFIG_DIR
 }
