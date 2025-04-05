@@ -139,10 +139,6 @@ deploy_traefik_bootstrap() {
     -v /var/run/docker.sock:/var/run/docker.sock \
     -v "$INSTALL_DIR/containers/traefik/config/traefik.yml:/etc/traefik/traefik.yml" \
     -v "$CERTS_PATH:/certs" \
-    -l "traefik.enable=true" \
-    -l "traefik.http.routers.sdm.rule=PathPrefix('/sdm')" \
-    -l "traefik.http.routers.sdm.entrypoints=websecure" \
-    -l "traefik.http.routers.sdm.tls=true" \
     traefik:v3.0
 }
 
@@ -150,13 +146,12 @@ deploy_traefik_bootstrap() {
 
 deploy_sdm_container() {
   echo_info "Lancement de SeedDock Manager (SDM)..."
-
   docker run -d --name sdm \
     --restart unless-stopped \
     --network traefik \
     -v "$INSTALL_DIR/SDM:/srv/sdm" \
     -l "traefik.enable=true" \
-    -l 'traefik.http.routers.sdm.rule=PathPrefix(`/sdm`)' \
+    -l "traefik.http.routers.sdm.rule=PathPrefix(`/`)" \
     -l "traefik.http.routers.sdm.entrypoints=websecure" \
     -l "traefik.http.routers.sdm.tls=true" \
     -l "traefik.http.services.sdm.loadbalancer.server.port=8000" \
