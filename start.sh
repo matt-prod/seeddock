@@ -22,16 +22,15 @@ source "$SCRIPT_DIR/includes/logo.sh"
 # Print logo
 print_logo
 
-# Init vars
-DEFAULT_INSTALL_DIR="$HOME/SeedDock"
-SD_STATUS_FILE="$DEFAULT_INSTALL_DIR/.sd_status"
-
-# Charger l'état d'avancement
-if [ -f "$SD_STATUS_FILE" ]; then
-  source "$SD_STATUS_FILE"
+# Init vars (chargement dynamique selon le fichier d'état)
+if [ -f "$HOME/SeedDock/.sd_status" ]; then
+  source "$HOME/SeedDock/.sd_status"
 else
   STEP=0
+  INSTALL_DIR="$HOME/SeedDock"
 fi
+
+SD_STATUS_FILE="$INSTALL_DIR/.sd_status"
 
 # Step runner
 case $STEP in
@@ -43,10 +42,12 @@ case $STEP in
     install_docker
     setup_user_groups
 
-    mkdir -p "$DEFAULT_INSTALL_DIR"
-    echo "STEP=1" > "$SD_STATUS_FILE"
+    mkdir -p "$INSTALL_DIR"
+    echo "INSTALL_DIR=\"$INSTALL_DIR\"" > "$SD_STATUS_FILE"
+    echo "STEP=1" >> "$SD_STATUS_FILE"
 
-    echo_warn "\nRedémarrez votre session (délog/relog), puis relancez start.sh."
+    echo_warn "\nRedémarrez votre session (délog/relog), puis relancez le script d'installation :"
+    echo_info "  curl -sSL https://raw.githubusercontent.com/matt-prod/seeddock/main/bootstrap.sh | bash"
     exit 0
     ;;
   1)
@@ -55,7 +56,8 @@ case $STEP in
     create_project_structure
     generate_vault_pass
     init_ansible_cfg
-    echo "STEP=2" > "$SD_STATUS_FILE"
+    echo "INSTALL_DIR=\"$INSTALL_DIR\"" > "$SD_STATUS_FILE"
+    echo "STEP=2" >> "$SD_STATUS_FILE"
     exec "$0"
     ;;
   2)
@@ -78,14 +80,16 @@ api:
   insecure: false
 EOF
     deploy_traefik_bootstrap
-    echo "STEP=3" > "$SD_STATUS_FILE"
+    echo "INSTALL_DIR=\"$INSTALL_DIR\"" > "$SD_STATUS_FILE"
+    echo "STEP=3" >> "$SD_STATUS_FILE"
     exec "$0"
     ;;
   3)
     echo_info "\n[Étape 3] Lancement du conteneur SDM..."
     deploy_sdm_container
     echo "✅ Installation terminée. Accédez à la WebUI via: https://<IP>/sdm"
-    echo "STEP=4" > "$SD_STATUS_FILE"
+    echo "INSTALL_DIR=\"$INSTALL_DIR\"" > "$SD_STATUS_FILE"
+    echo "STEP=4" >> "$SD_STATUS_FILE"
     ;;
   *)
     echo_info "\n✅ Toutes les étapes ont déjà été réalisées. Rien à faire."
