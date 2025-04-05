@@ -86,6 +86,15 @@ copy_ansible_templates() {
   cp "${INCLUDES_DIR}/templates/ansible.cfg.template" "${INSTALL_DIR}/SDM/ansible.cfg"
 }
 
+# ----------- Template Traefik ----------
+
+copy_traefik_config() {
+  local target_dir="${INSTALL_DIR}/containers/traefik/config"
+  mkdir -p "${target_dir}"
+  echo_info "Copie du fichier de configuration traefik.yml..."
+  cp "${INCLUDES_DIR}/templates/traefik.yml.template" "${target_dir}/traefik.yml"
+}
+
 # ----------- Déploiement Traefik -----------
 deploy_traefik_bootstrap() {
   echo_info "Déploiement de Traefik (bootstrap)..."
@@ -102,6 +111,8 @@ deploy_traefik_bootstrap() {
       -subj "/CN=localhost" \
       -addext "subjectAltName=IP:127.0.0.1"
   fi
+
+  copy_traefik_config  # <<< ajout ici
 
   docker run -d --name traefik_bootstrap \
     --restart unless-stopped \
