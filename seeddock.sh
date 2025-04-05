@@ -32,7 +32,18 @@ case "$STEP" in
     install_git
     install_docker
     setup_user_groups
-    echo_warn "Déloguez puis relancez le script : ./seeddock.sh"
+
+    # --- Auto relance après relog
+    RESUME_FLAG="$INSTALL_DIR/.resume_seeddock"
+    BASHRC="$HOME/.bashrc"
+
+    if ! grep -q 'seeddock.sh' "$BASHRC"; then
+      echo_info "Préparation de la reprise automatique après reconnexion..."
+      echo "[ -f \"$RESUME_FLAG\" ] && bash \"$INSTALL_DIR/seeddock.sh\" && rm -f \"$RESUME_FLAG\"" >> "$BASHRC"
+      touch "$RESUME_FLAG"
+    fi
+
+    echo_warn "Délogguez puis reconnectez-vous. La suite s'exécutera automatiquement."
     echo 1 > "$STATUS_FILE"
     exit 0
     ;;
