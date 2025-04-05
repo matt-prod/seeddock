@@ -22,12 +22,16 @@ source "$SCRIPT_DIR/includes/logo.sh"
 # Print logo
 print_logo
 
-# Init .sd_status
-SD_STATUS_FILE="$SCRIPT_DIR/.sd_status"
-if [ ! -f "$SD_STATUS_FILE" ]; then
-  echo "STEP=0" > "$SD_STATUS_FILE"
+# Init vars
+DEFAULT_INSTALL_DIR="$HOME/SeedDock"
+SD_STATUS_FILE="$DEFAULT_INSTALL_DIR/.sd_status"
+
+# Charger l'état d'avancement
+if [ -f "$SD_STATUS_FILE" ]; then
+  source "$SD_STATUS_FILE"
+else
+  STEP=0
 fi
-source "$SD_STATUS_FILE"
 
 # Step runner
 case $STEP in
@@ -38,7 +42,10 @@ case $STEP in
     install_git
     install_docker
     setup_user_groups
+
+    mkdir -p "$DEFAULT_INSTALL_DIR"
     echo "STEP=1" > "$SD_STATUS_FILE"
+
     echo_warn "\nRedémarrez votre session (délog/relog), puis relancez start.sh."
     exit 0
     ;;
@@ -53,7 +60,6 @@ case $STEP in
     ;;
   2)
     echo_info "\n[Étape 2] Déploiement de Traefik (bootstrap)..."
-    # Ensure traefik.yml is not a directory
     rm -rf "$INSTALL_DIR/containers/traefik/config/traefik.yml"
     echo "# Traefik static config" > "$INSTALL_DIR/containers/traefik/config/traefik.yml"
     cat <<EOF >> "$INSTALL_DIR/containers/traefik/config/traefik.yml"
