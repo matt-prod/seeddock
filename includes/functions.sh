@@ -127,17 +127,24 @@ deploy_traefik_bootstrap() {
 # ----------- Déploiement SDM -----------
 deploy_sdm_container() {
   echo_info "Lancement de SeedDock Manager (SDM)..."
+
+  # S'assurer que le réseau traefik existe
+  ensure_traefik_network
+
   docker run -d --name sdm \
     --restart unless-stopped \
     --network traefik \
     -v "${INSTALL_DIR}/SDM:/srv/sdm" \
     -v "${INSTALL_DIR}/includes:/srv/sdm/includes" \
     -l "traefik.enable=true" \
-    -l "traefik.http.routers.sdm.rule=PathPrefix('/')" \
+    -l "traefik.http.routers.sdm.rule=PathPrefix(/)" \
     -l "traefik.http.routers.sdm.entrypoints=websecure" \
     -l "traefik.http.routers.sdm.tls=true" \
     -l "traefik.http.services.sdm.loadbalancer.server.port=8000" \
     ghcr.io/matt-prod/seeddock-manager:latest
+
+  echo_info "Vérification du réseau traefik :"
+  docker network inspect traefik | grep sdm || echo_warn "Le container SDM n'est pas détecté dans le réseau 'traefik'"
 }
 
 ensure_traefik_network() {
