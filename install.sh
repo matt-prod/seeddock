@@ -35,6 +35,13 @@ fi
 read -rp "📦 Chemin d'installation de SeedDock [default: ${HOME}/SeedDock] : " custom_path
 INSTALL_DIR="${custom_path:-${HOME}/SeedDock}"
 
+if [ -z "${INSTALL_DIR}" ]; then
+  echo_error "Le chemin d'installation est vide. Abandon."
+  exit 1
+fi
+
+# ----------- Clonage du dépôt -----------
+
 if [ -d "${INSTALL_DIR}" ]; then
   echo_warn "Le dossier ${INSTALL_DIR} existe déjà."
 else
