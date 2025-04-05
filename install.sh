@@ -19,6 +19,7 @@ echo_error() {
 }
 
 # ----------- Vérification de Git -----------
+
 if ! command -v git &>/dev/null; then
   echo_info "Installation de Git..."
   sudo apt update && sudo apt install -y git || {
@@ -29,29 +30,9 @@ else
   echo_info "Git déjà installé."
 fi
 
-# ----------- Vérification de Docker -----------
-if ! command -v docker &>/dev/null; then
-  echo_info "Installation de Docker via script officiel..."
-  curl -fsSL https://get.docker.com | sudo sh || {
-    echo_error "Échec de l'installation de Docker."
-    exit 1
-  }
-else
-  echo_info "Docker déjà installé."
-fi
-
-# ----------- Groupes utilisateur -----------
-echo_info "Ajout de l'utilisateur aux groupes sudo et docker..."
-sudo usermod -aG sudo "${USER}"
-sudo usermod -aG docker "${USER}"
-echo "${USER} ALL=(ALL) NOPASSWD:ALL" | sudo tee "/etc/sudoers.d/${USER}" >/dev/null
-
-# ----------- Clonage dans ~/SeedDock -----------
+# ----------- Préparation du dossier -----------
 
 INSTALL_DIR="${HOME}/SeedDock"
-RESUME_FLAG="${INSTALL_DIR}/.resume_seeddock"
-BASHRC="${HOME}/.bashrc"
-
 if [ -d "${INSTALL_DIR}" ]; then
   echo_warn "Le dossier ${INSTALL_DIR} existe déjà."
 else
@@ -62,18 +43,15 @@ else
   }
 fi
 
-# ----------- Ajout de la reprise automatique -----------
+# ----------- Préparation de l'exécution -----------
 
-RESUME_FLAG="${INSTALL_DIR}/.resume_seeddock"
-BASHRC="${HOME}/.bashrc"
+touch "${INSTALL_DIR}/.resume_seeddock"
+chmod +x "${INSTALL_DIR}/seeddock.sh"
 
-if ! grep -q 'seeddock.sh' "${BASHRC}"; then
+if ! grep -q 'seeddock.sh' "${HOME}/.bashrc"; then
   echo_info "Préparation de la reprise automatique après reconnexion..."
-  echo "[ -f \"${RESUME_FLAG}\" ] && bash \"${INSTALL_DIR}/seeddock.sh\" && rm -f \"${RESUME_FLAG}\"" >> "${BASHRC}"
-  touch "${RESUME_FLAG}"
+  echo "[ -f \"${INSTALL_DIR}/.resume_seeddock\" ] && bash \"${INSTALL_DIR}/seeddock.sh\"" >> "${HOME}/.bashrc"
 fi
 
-# ----------- Lancement de seeddock.sh -----------
 echo_info "Lancement de l'installation avec seeddock.sh..."
-chmod +x "${INSTALL_DIR}/seeddock.sh"
 bash "${INSTALL_DIR}/seeddock.sh"

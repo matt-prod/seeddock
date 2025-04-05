@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# ------------- Chargement des includes -------------
+# ----------- Chargement des includes -----------
 INCLUDES_DIR="$(dirname "${BASH_SOURCE[0]}")/includes"
 
 if [ ! -f "${INCLUDES_DIR}/functions.sh" ] || [ ! -f "${INCLUDES_DIR}/variables.sh" ]; then
@@ -12,22 +12,18 @@ source "${INCLUDES_DIR}/variables.sh"
 source "${INCLUDES_DIR}/functions.sh"
 [ -f "${INCLUDES_DIR}/logo.sh" ] && source "${INCLUDES_DIR}/logo.sh"
 
-# ------------- Affichage logo -------------
 show_logo
 
-# ------------- Reprise automatique / initialisation -------------
-if [ ! -f "${STATUS_FILE}" ]; then
-  echo "0" > "${STATUS_FILE}"
-fi
-
-STEP="$(cat "${STATUS_FILE}")"
-
+# ----------- Reprise auto -----------
 if [ -f "${RESUME_FLAG}" ]; then
-  echo_info "[REPRISE] Suite de l'installation à partir de l'étape ${STEP}"
+  echo_info "[REPRISE] Suite de l'installation à partir de l'étape $(cat "${STATUS_FILE}")"
   rm -f "${RESUME_FLAG}"
 fi
 
-# ------------- Exécution progressive des étapes -------------
+[ -f "${STATUS_FILE}" ] || echo "0" > "${STATUS_FILE}"
+STEP="$(cat "${STATUS_FILE}")"
+
+# ----------- Étapes -----------
 case "${STEP}" in
   0)
     run_step "Vérification de l'environnement" verify_os
@@ -36,15 +32,9 @@ case "${STEP}" in
     install_docker
     setup_user_groups
 
-    # Préparer la reprise automatique après relog
-    if ! grep -q 'seeddock.sh' "${HOME}/.bashrc"; then
-      echo_info "Préparation de la reprise automatique après reconnexion..."
-      echo "[ -f \"${RESUME_FLAG}\" ] && bash \"${INSTALL_DIR}/seeddock.sh\" && rm -f \"${RESUME_FLAG}\"" >> "${HOME}/.bashrc"
-      touch "${RESUME_FLAG}"
-    fi
-
     echo_warn "Délogguez puis reconnectez-vous. La suite s'exécutera automatiquement."
     echo "1" > "${STATUS_FILE}"
+    touch "${RESUME_FLAG}"
     exit 0
     ;;
 

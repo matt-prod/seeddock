@@ -1,43 +1,25 @@
 #!/bin/bash
 
-# ------------- Log Helpers -------------
+# ----------- Log Helpers -----------
+echo_info() { echo -e "\033[36m[INFO]\033[0m $1"; }
+echo_warn() { echo -e "\033[33m[WARN]\033[0m $1"; }
+echo_error() { echo -e "\033[31m[ERROR]\033[0m $1"; }
 
-echo_info() {
-  echo -e "\033[36m[INFO]\033[0m $1"
-}
-
-echo_warn() {
-  echo -e "\033[33m[WARN]\033[0m $1"
-}
-
-echo_error() {
-  echo -e "\033[31m[ERROR]\033[0m $1"
-}
-
-# ------------- Étapes -------------
-
+# ----------- Étapes -----------
 run_step() {
   local label="$1"
   local func="$2"
-
   echo_info "[Étape ${STEP}] ${label}"
-  STEP=$((STEP + 1))
   "${func}"
 }
 
-# ------------- Vérification OS -------------
-
+# ----------- Vérification OS -----------
 verify_os() {
   if [ -f /etc/os-release ]; then
     . /etc/os-release
     case "${ID}" in
-      debian|ubuntu)
-        echo_info "OS détecté : ${PRETTY_NAME}"
-        ;;
-      *)
-        echo_error "OS non supporté (${ID})"
-        exit 1
-        ;;
+      debian|ubuntu) echo_info "OS détecté : ${PRETTY_NAME}" ;;
+      *) echo_error "OS non supporté (${ID})" && exit 1 ;;
     esac
   else
     echo_error "Impossible de détecter le système"
@@ -52,24 +34,21 @@ check_not_root() {
   fi
 }
 
-# ------------- Installations -------------
-
+# ----------- Installations -----------
 install_git() {
-  if ! command -v git &>/dev/null; then
+  command -v git &>/dev/null || {
     echo_info "Installation de Git..."
     sudo apt update && sudo apt install -y git
-  else
-    echo_info "Git déjà installé."
-  fi
+  }
+  echo_info "Git déjà installé."
 }
 
 install_docker() {
-  if ! command -v docker &>/dev/null; then
+  command -v docker &>/dev/null || {
     echo_info "Installation de Docker via script officiel..."
     curl -fsSL https://get.docker.com | sudo sh
-  else
-    echo_info "Docker déjà installé."
-  fi
+  }
+  echo_info "Docker déjà installé."
 }
 
 setup_user_groups() {
@@ -79,8 +58,7 @@ setup_user_groups() {
   echo "${USER} ALL=(ALL) NOPASSWD:ALL" | sudo tee "/etc/sudoers.d/${USER}" >/dev/null
 }
 
-# ------------- Structure -------------
-
+# ----------- Structure du projet -----------
 create_project_structure() {
   echo_info "Création des dossiers..."
   mkdir -p "${INSTALL_DIR}/includes"
@@ -91,8 +69,7 @@ create_project_structure() {
   mkdir -p "${INSTALL_DIR}/SDM/group_vars"
 }
 
-# ------------- Vault & Ansible -------------
-
+# ----------- Vault & Ansible -----------
 generate_vault_pass() {
   echo_info "Génération du fichier vault_pass..."
   head -c 24 /dev/urandom | base64 > "${CONFIG_DIR}/vault_pass"
@@ -107,8 +84,7 @@ copy_ansible_templates() {
   cp "${INCLUDES_DIR}/templates/ansible.cfg.template" "${INSTALL_DIR}/SDM/ansible.cfg"
 }
 
-# ------------- Déploiement Traefik -------------
-
+# ----------- Déploiement Traefik -----------
 deploy_traefik_bootstrap() {
   echo_info "Déploiement de Traefik (bootstrap)..."
   ensure_traefik_network
@@ -135,8 +111,7 @@ deploy_traefik_bootstrap() {
     traefik:v3.0
 }
 
-# ------------- Déploiement SDM -------------
-
+# ----------- Déploiement SDM -----------
 deploy_sdm_container() {
   echo_info "Lancement de SeedDock Manager (SDM)..."
   docker run -d --name sdm \
@@ -153,10 +128,8 @@ deploy_sdm_container() {
 }
 
 ensure_traefik_network() {
-  if ! docker network ls | grep -q 'traefik'; then
+  docker network ls | grep -q 'traefik' || {
     echo_info "Création du network Docker 'traefik'..."
     docker network create traefik
-  else
-    echo_info "Network 'traefik' déjà existant."
-  fi
+  }
 }
