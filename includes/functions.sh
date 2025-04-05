@@ -156,9 +156,10 @@ deploy_sdm_container() {
     --network traefik \
     -v "$INSTALL_DIR/SDM:/srv/sdm" \
     -l "traefik.enable=true" \
-    -l "traefik.http.routers.sdm.rule=PathPrefix('/sdm')" \
+    -l 'traefik.http.routers.sdm.rule=PathPrefix(`/sdm`)' \
     -l "traefik.http.routers.sdm.entrypoints=websecure" \
     -l "traefik.http.routers.sdm.tls=true" \
+    -l "traefik.http.services.sdm.loadbalancer.server.port=8000" \
     ghcr.io/matt-prod/seeddock-manager:latest
 }
 
