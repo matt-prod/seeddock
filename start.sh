@@ -12,7 +12,7 @@ set -e
 # - Déploie SDM WebUI sur /sdm
 # ------------------------------
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}" )" && pwd)"
 
 # Load includes
 source "$SCRIPT_DIR/includes/variables.sh"
@@ -49,11 +49,12 @@ case $STEP in
     generate_vault_pass
     init_ansible_cfg
     echo "STEP=2" > "$SD_STATUS_FILE"
+    exec "$0"
     ;;
   2)
     echo_info "\n[Étape 2] Déploiement de Traefik (bootstrap)..."
-    deploy_traefik_bootstrap
-
+    # Ensure traefik.yml is not a directory
+    rm -rf "$INSTALL_DIR/containers/traefik/config/traefik.yml"
     echo "# Traefik static config" > "$INSTALL_DIR/containers/traefik/config/traefik.yml"
     cat <<EOF >> "$INSTALL_DIR/containers/traefik/config/traefik.yml"
 entryPoints:
@@ -70,8 +71,9 @@ api:
   dashboard: false
   insecure: false
 EOF
-
+    deploy_traefik_bootstrap
     echo "STEP=3" > "$SD_STATUS_FILE"
+    exec "$0"
     ;;
   3)
     echo_info "\n[Étape 3] Lancement du conteneur SDM..."
