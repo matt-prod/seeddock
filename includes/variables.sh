@@ -13,6 +13,8 @@ CGRAY="\033[1;90m"
 INSTALL_DIR="${HOME}/SeedDock"
 CONFIG_DIR="${INSTALL_DIR}/SDM/config"
 INCLUDES_DIR="${INSTALL_DIR}/includes"
+RESUME_FLAG="${HOME}/.resume_seeddock"
 STATUS_FILE="${INSTALL_DIR}/.seeddock_step"
-RESUME_FLAG="${INSTALL_DIR}/.resume_seeddock"
-VERSION="$(cat "${INSTALL_DIR}/VERSION" 2>/dev/null || echo "dev")"
+
+VERSION=$(cat "${INSTALL_DIR}/VERSION" 2>/dev/null || echo "dev")
+STEP=0

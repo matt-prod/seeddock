@@ -15,13 +15,13 @@ source "${INCLUDES_DIR}/functions.sh"
 show_logo
 
 # ----------- Reprise auto -----------
+[ -f "${STATUS_FILE}" ] || echo "0" > "${STATUS_FILE}"
+STEP="$(cat "${STATUS_FILE}" 2>/dev/null || echo 0)"
+
 if [ -f "${RESUME_FLAG}" ]; then
-  echo_info "[REPRISE] Suite de l'installation à partir de l'étape $(cat "${STATUS_FILE}")"
+  echo_info "[REPRISE] Suite de l'installation à partir de l'étape ${STEP}"
   rm -f "${RESUME_FLAG}"
 fi
-
-[ -f "${STATUS_FILE}" ] || echo "0" > "${STATUS_FILE}"
-STEP="$(cat "${STATUS_FILE}")"
 
 # ----------- Étapes -----------
 case "${STEP}" in

@@ -9,7 +9,9 @@ echo_error() { echo -e "\033[31m[ERROR]\033[0m $1"; }
 run_step() {
   local label="$1"
   local func="$2"
+
   echo_info "[Étape ${STEP}] ${label}"
+  STEP=$((STEP + 1))
   "${func}"
 }
 
