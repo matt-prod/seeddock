@@ -112,7 +112,7 @@ deploy_traefik_bootstrap() {
       -addext "subjectAltName=IP:127.0.0.1"
   fi
 
-  copy_traefik_config  # <<< ajout ici
+  copy_traefik_config
 
   docker run -d --name traefik_bootstrap \
     --restart unless-stopped \
