@@ -31,11 +31,13 @@ fi
 
 # ----------- Lecture du chemin d'installation -----------
 
+DEFAULT_DIR="${HOME}/SeedDock"
 if [ -t 0 ]; then
-  read -rp "📦 Chemin d'installation de SeedDock [default: ${HOME}/SeedDock] : " custom_path
-  INSTALL_DIR="${custom_path:-${HOME}/SeedDock}"
+  read -rp "📦 Chemin d'installation de SeedDock [default: ${DEFAULT_DIR}] : " custom_path
+  INSTALL_DIR="${custom_path}"
+  [ -z "${INSTALL_DIR}" ] && INSTALL_DIR="${DEFAULT_DIR}"
 else
-  INSTALL_DIR="${HOME}/SeedDock"
+  INSTALL_DIR="${DEFAULT_DIR}"
   echo_info "Mode non interactif détecté, utilisation de : ${INSTALL_DIR}"
 fi
 
