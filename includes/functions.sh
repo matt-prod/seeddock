@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # ------------- Log Helpers -------------
+
 echo_info() {
   echo -e "${CBLUE}[INFO]${CEND} $1"
 }
@@ -11,6 +12,16 @@ echo_warn() {
 
 echo_error() {
   echo -e "${CRED}[ERROR]${CEND} $1"
+}
+
+# ------------- Step runner -------------
+
+run_step() {
+  STEP_NAME="$1"
+  shift
+  echo_info "[Étape $STEP] $STEP_NAME"
+  "$@"
+  STEP=$((STEP + 1))
 }
 
 # ------------- Vérification OS -------------
@@ -77,7 +88,7 @@ prompt_install_path() {
       CONFIG_DIR="$INSTALL_DIR/SDM/config"
     fi
   else
-    echo_info "[INFO] Mode non interactif détecté, utilisation de : $INSTALL_DIR"
+    echo_info "Mode non interactif détecté, utilisation de : $INSTALL_DIR"
   fi
   export INSTALL_DIR CONFIG_DIR
 }
@@ -98,9 +109,9 @@ generate_vault_pass() {
   head -c 24 /dev/urandom | base64 > "$CONFIG_DIR/vault_pass"
   chmod 600 "$CONFIG_DIR/vault_pass"
 
-  echo_info "Création de all.yml minimal..."
+  echo_info "Copie du template all.yml..."
   mkdir -p "$INSTALL_DIR/SDM/group_vars"
-  echo -e "user:\n  name: \"\"" > "$INSTALL_DIR/SDM/group_vars/all.yml"
+  cp "$INSTALL_DIR/includes/templates/all.yml.template" "$INSTALL_DIR/SDM/group_vars/all.yml"
 }
 
 init_ansible_cfg() {
@@ -112,6 +123,17 @@ vault_password_file = ./config/vault_pass
 host_key_checking = False
 retry_files_enabled = False
 EOF
+}
+
+# ------------- Docker Network -------------
+
+ensure_traefik_network() {
+  if ! docker network ls | grep -q 'traefik'; then
+    echo_info "Création du network Docker 'traefik'..."
+    docker network create traefik
+  else
+    echo_info "Network 'traefik' déjà existant."
+  fi
 }
 
 # ------------- Déploiement Traefik -------------
@@ -150,19 +172,11 @@ deploy_sdm_container() {
     --restart unless-stopped \
     --network traefik \
     -v "$INSTALL_DIR/SDM:/srv/sdm" \
+    -v "$INSTALL_DIR/includes:/srv/includes" \
     -l "traefik.enable=true" \
     -l "traefik.http.routers.sdm.rule=PathPrefix(`/`)" \
     -l "traefik.http.routers.sdm.entrypoints=websecure" \
     -l "traefik.http.routers.sdm.tls=true" \
     -l "traefik.http.services.sdm.loadbalancer.server.port=8000" \
     ghcr.io/matt-prod/seeddock-manager:latest
-}
-
-ensure_traefik_network() {
-  if ! docker network ls | grep -q 'traefik'; then
-    echo_info "Création du network Docker 'traefik'..."
-    docker network create traefik
-  else
-    echo_info "Network 'traefik' déjà existant."
-  fi
 }
