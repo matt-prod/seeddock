@@ -19,7 +19,6 @@ echo_error() {
 }
 
 # ----------- Vérification de Git -----------
-
 if ! command -v git &>/dev/null; then
   echo_info "Installation de Git..."
   sudo apt update && sudo apt install -y git || {
@@ -32,15 +31,19 @@ fi
 
 # ----------- Lecture du chemin d'installation -----------
 
-read -rp "📦 Chemin d'installation de SeedDock [default: ${HOME}/SeedDock] : " custom_path
-INSTALL_DIR="${custom_path:-${HOME}/SeedDock}"
+if [ -t 0 ]; then
+  read -rp "📦 Chemin d'installation de SeedDock [default: ${HOME}/SeedDock] : " custom_path
+  INSTALL_DIR="${custom_path:-${HOME}/SeedDock}"
+else
+  INSTALL_DIR="${HOME}/SeedDock"
+  echo_info "Mode non interactif détecté, utilisation de : ${INSTALL_DIR}"
+fi
 
+# ----------- Clonage du dépôt -----------
 if [ -z "${INSTALL_DIR}" ]; then
   echo_error "Le chemin d'installation est vide. Abandon."
   exit 1
 fi
-
-# ----------- Clonage du dépôt -----------
 
 if [ -d "${INSTALL_DIR}" ]; then
   echo_warn "Le dossier ${INSTALL_DIR} existe déjà."
