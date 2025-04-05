@@ -44,8 +44,7 @@ case "$(cat "${STATUS_FILE}" 2>/dev/null || echo 0)" in
   1)
     run_step "Création des dossiers et configuration de base" create_project_structure
     generate_vault_pass
-    copy_all_yml_template
-    init_ansible_cfg
+    copy_ansible_templates
     echo 2 > "${STATUS_FILE}"
     ;;
 
