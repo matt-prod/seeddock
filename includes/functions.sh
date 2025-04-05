@@ -113,10 +113,10 @@ generate_vault_pass() {
 
 copy_ansible_templates() {
   echo_info "Copie du template all.yml..."
-  cp "${INCLUDES_DIR}/templates/all.yml" "${INSTALL_DIR}/SDM/group_vars/all.yml"
+  cp "${INCLUDES_DIR}/templates/all.yml.template" "${INSTALL_DIR}/SDM/group_vars/all.yml"
 
   echo_info "Initialisation du fichier ansible.cfg..."
-  cp "${INCLUDES_DIR}/templates/ansible.cfg" "${INSTALL_DIR}/SDM/ansible.cfg"
+  cp "${INCLUDES_DIR}/templates/ansible.cfg.template" "${INSTALL_DIR}/SDM/ansible.cfg"
 }
 
 # ------------- Déploiement Traefik -------------
