@@ -115,14 +115,8 @@ generate_vault_pass() {
 }
 
 init_ansible_cfg() {
-  echo_info "Initialisation du fichier ansible.cfg..."
-  cat <<EOF > "$INSTALL_DIR/SDM/ansible.cfg"
-[defaults]
-inventory = ./inventory
-vault_password_file = ./config/vault_pass
-host_key_checking = False
-retry_files_enabled = False
-EOF
+  echo_info "Copie du fichier ansible.cfg..."
+  cp "$INSTALL_DIR/templates/ansible.cfg" "$INSTALL_DIR/SDM/ansible.cfg"
 }
 
 # ------------- Docker Network -------------
