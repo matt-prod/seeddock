@@ -137,7 +137,7 @@ deploy_sdm_container() {
     -v "${INSTALL_DIR}/SDM:/srv/sdm" \
     -v "${INSTALL_DIR}/includes:/srv/sdm/includes" \
     -l "traefik.enable=true" \
-    -l "traefik.http.routers.sdm.rule=PathPrefix(/)" \
+    -l "traefik.http.routers.sdm.rule=PathPrefix('/')" \
     -l "traefik.http.routers.sdm.entrypoints=websecure" \
     -l "traefik.http.routers.sdm.tls=true" \
     -l "traefik.http.services.sdm.loadbalancer.server.port=8000" \
