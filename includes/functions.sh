@@ -78,7 +78,7 @@ prompt_install_path() {
       CONFIG_DIR="${INSTALL_DIR}/SDM/config"
     fi
   else
-    echo_info "[INFO] Mode non interactif détecté, utilisation de : ${INSTALL_DIR}"
+    echo_info "Mode non interactif détecté, utilisation de : ${INSTALL_DIR}"
   fi
   export INSTALL_DIR CONFIG_DIR
 }
@@ -147,7 +147,7 @@ deploy_sdm_container() {
     -v "${INSTALL_DIR}/SDM:/srv/sdm" \
     -v "${INSTALL_DIR}/includes:/srv/sdm/includes" \
     -l "traefik.enable=true" \
-    -l "traefik.http.routers.sdm.rule=PathPrefix(`/`)" \
+    -l "traefik.http.routers.sdm.rule=PathPrefix('/')" \
     -l "traefik.http.routers.sdm.entrypoints=websecure" \
     -l "traefik.http.routers.sdm.tls=true" \
     -l "traefik.http.services.sdm.loadbalancer.server.port=8000" \

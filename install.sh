@@ -19,6 +19,7 @@ echo_error() {
 }
 
 # ----------- Vérification de Git -----------
+
 if ! command -v git &>/dev/null; then
   echo_info "Installation de Git..."
   sudo apt update && sudo apt install -y git || {
@@ -31,21 +32,18 @@ fi
 
 # ----------- Lecture du chemin d'installation -----------
 
-DEFAULT_DIR="${HOME}/SeedDock"
+DEFAULT_PATH="${HOME}/SeedDock"
 if [ -t 0 ]; then
-  read -rp "📦 Chemin d'installation de SeedDock [default: ${DEFAULT_DIR}] : " custom_path
-  INSTALL_DIR="${custom_path}"
-  [ -z "${INSTALL_DIR}" ] && INSTALL_DIR="${DEFAULT_DIR}"
-else
-  INSTALL_DIR="${DEFAULT_DIR}"
-  echo_info "Mode non interactif détecté, utilisation de : ${INSTALL_DIR}"
+  read -rp "📦 Chemin d'installation de SeedDock [default: ${DEFAULT_PATH}] : " custom_path
 fi
+INSTALL_DIR="${custom_path:-${DEFAULT_PATH}}"
 
-# ----------- Clonage du dépôt -----------
 if [ -z "${INSTALL_DIR}" ]; then
   echo_error "Le chemin d'installation est vide. Abandon."
   exit 1
 fi
+
+# ----------- Clonage du dépôt -----------
 
 if [ -d "${INSTALL_DIR}" ]; then
   echo_warn "Le dossier ${INSTALL_DIR} existe déjà."
@@ -59,12 +57,9 @@ fi
 
 # ----------- Préparation de l'exécution ------------
 
-# Stocker le chemin pour reprise
 echo "${INSTALL_DIR}" > "${INSTALL_DIR}/.install_dir"
 
-# Rendre le script exécutable
 chmod +x "${INSTALL_DIR}/seeddock.sh"
 
-# Lancer le script
 echo_info "Lancement de l'installation avec seeddock.sh..."
 bash "${INSTALL_DIR}/seeddock.sh"
