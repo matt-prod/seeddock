@@ -33,4 +33,6 @@ bash <(curl -sSL https://raw.githubusercontent.com/matt-prod/seeddock/main/insta
 
 ## Licence
 
-Voir [LICENSE](LICENSE).
+SeedDock est distribué sous licence [GNU GPLv3](LICENSE), avec une clause additionnelle interdisant tout usage commercial sans autorisation écrite préalable de l’auteur.
+
+> Toute réutilisation dans un projet commercial, SaaS, hébergement ou service à but lucratif est interdite sans consentement explicite.
