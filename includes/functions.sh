@@ -136,6 +136,8 @@ deploy_sdm_container() {
     --network traefik \
     -v "${INSTALL_DIR}/SDM:/srv/sdm" \
     -v "${INSTALL_DIR}/includes:/srv/sdm/includes" \
+    -v "${INSTALL_DIR}/SDM/group_vars:/srv/sdm/group_vars" \
+    -v "${CONFIG_DIR}/vault_pass:/vault_pass" \
     -l "traefik.enable=true" \
     -l "traefik.http.routers.sdm.rule=PathPrefix(\`/\`)" \
     -l "traefik.http.routers.sdm.entrypoints=websecure" \
