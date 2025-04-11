@@ -40,6 +40,7 @@ while true; do
       ;;
     1)
       run_step "Création des dossiers et configuration de base" create_project_structure
+      create_inventory_file
       generate_vault_pass
       copy_ansible_templates
       echo "2" > "${STATUS_FILE}"

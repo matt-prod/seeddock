@@ -71,6 +71,11 @@ create_project_structure() {
   mkdir -p "${INSTALL_DIR}/SDM/group_vars"
 }
 
+create_inventory_file() {
+  echo_info "Création du fichier d'inventaire Ansible..."
+  echo -e "[local]\nlocalhost ansible_connection=local" > "${INSTALL_DIR}/SDM/inventory/hosts"
+}
+
 # ----------- Vault & Ansible -----------
 generate_vault_pass() {
   echo_info "Génération du fichier vault_pass..."
