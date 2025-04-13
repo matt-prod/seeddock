@@ -154,9 +154,28 @@ deploy_sdm_container() {
   docker network inspect traefik | grep sdm || echo_warn "Le container SDM n'est pas détecté dans le réseau 'traefik'"
 }
 
+generate_ipv6_ula() {
+  local rand_hex=$(openssl rand -hex 5)
+  echo "fd${rand_hex:0:2}:${rand_hex:2:4}:${rand_hex:6:4}::/64"
+}
+
 ensure_traefik_network() {
-  docker network ls | grep -q 'traefik' || {
-    echo_info "Création du network Docker 'traefik'..."
-    docker network create traefik
-  }
+  if docker network ls --format '{{.Name}}' | grep -q "^traefik$"; then
+    echo_info "Le réseau Docker 'traefik' existe déjà."
+    return
+  fi
+
+  echo_info "Création du réseau Docker 'traefik'..."
+
+  if [ -n "${IPV6_PUBLIC}" ]; then
+    IPV6_ULA=$(generate_ipv6_ula)
+    echo_info "IPv6 détectée. Utilisation du préfixe ULA : ${IPV6_ULA}"
+    docker network create traefik \
+      --driver bridge \
+      --subnet=172.18.0.0/16 \
+      --ipv6 \
+      --subnet="${IPV6_ULA}"
+  else
+    docker network create traefik --driver bridge --subnet=172.18.0.0/16
+  fi
 }

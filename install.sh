@@ -44,6 +44,13 @@ if ! grep -q 'seeddock.sh' "${BASHRC}"; then
   touch "${RESUME_FLAG}"
 fi
 
+echo_info "Ajout du profil SeedDock dans .bashrc..."
+
+PROFILE_LINE="source \"${INSTALL_DIR}/includes/profile.sh\""
+if ! grep -q "${PROFILE_LINE}" "${HOME}/.bashrc"; then
+  echo "${PROFILE_LINE}" >> "${HOME}/.bashrc"
+fi
+
 # ----------- Exécution -----------
 echo_info "Lancement de l'installation avec seeddock.sh..."
 chmod +x "${INSTALL_DIR}/seeddock.sh"

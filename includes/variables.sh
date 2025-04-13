@@ -18,3 +18,7 @@ STATUS_FILE="${INSTALL_DIR}/.seeddock_step"
 
 VERSION=$(cat "${INSTALL_DIR}/VERSION" 2>/dev/null || echo "dev")
 STEP=0
+
+# Detection de l'IPv6 publique
+IPV6_PUBLIC=$(ip -6 addr show | grep -oP '(?<=inet6\s)[0-9a-f:]+(?=/)' | grep -v '^fe80' | grep -v '^fd' | head -n 1)
+export IPV6_PUBLIC
