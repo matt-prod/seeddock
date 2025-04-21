@@ -142,7 +142,6 @@ deploy_sdm_container() {
     -v "${INSTALL_DIR}/SDM/group_vars:/srv/sdm/group_vars" \
     -v "${INSTALL_DIR}/SDM/config:/srv/sdm/config" \
     -v "${INSTALL_DIR}/SDM/inventory:/srv/sdm/inventory" \
-    -v "${INSTALL_DIR}/SDM/playbooks:/srv/sdm/playbooks" \
     -v "${INSTALL_DIR}/includes:/srv/sdm/includes" \
     -l "traefik.enable=true" \
     -l "traefik.http.routers.sdm.rule=PathPrefix(\`/\`)" \
